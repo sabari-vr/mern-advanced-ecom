@@ -58,7 +58,7 @@ const ProductDetailView = () => {
         if (!selectedSize) return errorMessage('Please select a size')
         if (cartItem) return navigate('/cart')
         if (!user) {
-            toast.error("Please login to add products to cart", { id: "login" });
+            errorMessage("Please login to add products to cart", { id: "login" });
             return;
         } else {
             addToCartMutation.mutate({ product, size: selectedSize })
@@ -75,6 +75,19 @@ const ProductDetailView = () => {
     const handleWishlistClick = () => {
         toggleWishListMutation.mutate(id)
     };
+
+    const handleBuy = () => {
+        if (!selectedSize) {
+            errorMessage('Please select a size');
+            return;
+        }
+        if (!user) {
+            errorMessage("Please login to add products to cart", { id: "login" });
+            return;
+        } else {
+            navigate(`/order?products=${encodedProducts}`)
+        }
+    }
 
 
     if (productByIdQuery?.isLoading || !product) {
@@ -196,8 +209,7 @@ text-white hover:bg-emerald-700 focus:outline-none focus:ring-4 focus:ring-emera
 
                             <button
                                 className="flex items-center justify-center px-6 py-3 bg-green-500 text-white rounded hover:bg-green-600 transition-colors duration-300"
-                                disabled={!selectedSize}
-                                onClick={() => navigate(`/order?products=${encodedProducts}`)}
+                                onClick={handleBuy}
                             >
                                 <CreditCard className="mr-2" size={20} />
                                 Buy Now

@@ -25,7 +25,7 @@ router.post(
   upload.array("images"),
   createCategory
 );
-router.get("/", protectRoute, adminRoute, getCategories);
+router.get("/", getCategories);
 router.get("/:id", protectRoute, adminRoute, getCategoryById);
 router.put(
   "/:id",

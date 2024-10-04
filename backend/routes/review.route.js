@@ -9,7 +9,7 @@ import {
 const router = express.Router();
 
 router.get("/get-order/:id", protectRoute, getOrderByIdForReview);
-router.get("/:productId", protectRoute, getReviewByProductId);
+router.get("/:productId", getReviewByProductId);
 router.post("/", protectRoute, createReview);
 
 export default router;
