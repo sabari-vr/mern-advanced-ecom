@@ -73,7 +73,7 @@ const ProductDetailView = () => {
     const isWishlisted = WishListState?.some((e) => e.product._id == product._id)
 
     const handleWishlistClick = () => {
-        if (!user) return errorMessage("Please login to add products to cart", { id: "login" });
+        if (!user) return errorMessage("Please login to add products to whislist", { id: "login" });
         toggleWishListMutation.mutate(id)
     };
 
