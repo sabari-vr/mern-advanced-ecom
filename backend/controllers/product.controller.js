@@ -1,6 +1,7 @@
 import cloudinary from "../config/cloudinary.js";
 import { Category } from "../models/category.model.js";
 import { Product } from "../models/product.model.js";
+import { redis } from "../config/redis.js";
 
 export const getAllProducts = async (req, res) => {
   const page = parseInt(req.query.page) || 1;
@@ -67,9 +68,14 @@ export const getProductById = async (req, res) => {
 
 export const getFeaturedProducts = async (req, res) => {
   try {
+    let featuredProducts = await redis.get("featured_products");
+    if (featuredProducts) {
+      return res.json(JSON.parse(featuredProducts));
+    }
+
     // .lean() is gonna return a plain javascript object instead of a mongodb document
     // which is good for performance
-    let featuredProducts = await Product.find({ isFeatured: true }).lean();
+    featuredProducts = await Product.find({ isFeatured: true }).lean();
 
     if (!featuredProducts) {
       return res.status(404).json({ message: "No featured products found" });
@@ -278,8 +284,6 @@ export const getProductsByCategory = async (req, res) => {
     }
   }
 
-  console.log(filter);
-
   try {
     const products = await Product.find(filter)
       .sort({ updatedAt: -1 })
@@ -311,6 +315,7 @@ export const toggleFeaturedProduct = async (req, res) => {
     if (product) {
       product.isFeatured = !product.isFeatured;
       const updatedProduct = await product.save();
+      await updateFeaturedProductsCache();
       res.json(updatedProduct);
     } else {
       res.status(404).json({ message: "Product not found" });
@@ -320,3 +325,12 @@ export const toggleFeaturedProduct = async (req, res) => {
     res.status(500).json({ message: "Server error", error: error.message });
   }
 };
+
+async function updateFeaturedProductsCache() {
+  try {
+    const featuredProducts = await Product.find({ isFeatured: true }).lean();
+    await redis.set("featured_products", JSON.stringify(featuredProducts));
+  } catch (error) {
+    console.log("error in update cache function");
+  }
+}
