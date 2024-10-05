@@ -106,7 +106,7 @@ const CategoryPage = () => {
     }
 
 
-    if (isLoading && products.length === 0) {
+    if ((isLoading || isFetching) && products.length === 0) {
         return <LoadingSpinner />
     }
 
