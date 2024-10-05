@@ -8,7 +8,7 @@ import toast from "react-hot-toast";
 import { useQueryClient } from "@tanstack/react-query";
 const razorpayKeyId = import.meta.env.VITE_RAZORPAY_KEY_ID;
 
-const OrderSummary = ({ data, cartData = false }) => {
+const OrderSummary = ({ data, cartData = false, setLoading }) => {
     const navigate = useNavigate()
     const queryClient = useQueryClient();
     const { CartState } = useCartScope();
@@ -56,6 +56,7 @@ const OrderSummary = ({ data, cartData = false }) => {
             order_id: data.id,
             handler: async (response) => {
                 try {
+                    setLoading(true)
                     const res = await Axios.post(`/payment/verify`, {
                         razorpay_order_id: response.razorpay_order_id,
                         razorpay_payment_id: response.razorpay_payment_id,
@@ -73,8 +74,9 @@ const OrderSummary = ({ data, cartData = false }) => {
                     }
 
                 } catch (error) {
-
                     console.log(error);
+                } finally {
+                    setLoading(false)
                 }
             },
             theme: {

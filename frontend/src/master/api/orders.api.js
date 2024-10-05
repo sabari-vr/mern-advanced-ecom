@@ -1,12 +1,12 @@
 import { Axios } from "../../utils";
 
-export const getMyOrders = async () => {
-  const res = await Axios.get(`/orders`);
+export const getMyOrders = async (page) => {
+  const res = await Axios.get(`/orders?page=${page}&limit=5`);
   return res.data;
 };
 
-export const getAllOrders = async () => {
-  const res = await Axios.get(`/orders/getAllOrders`);
+export const getAllOrders = async (page) => {
+  const res = await Axios.get(`/orders/getAllOrders?page=${page}&limit=5`);
   return res.data;
 };
 

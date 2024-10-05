@@ -6,12 +6,14 @@ import {
   updateOrderStatus,
 } from "../api";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useImmer } from "use-immer";
 
 export const useOrders = ({ isAdmin = false, load = false }) => {
   const queryClient = useQueryClient();
+  const [page, setPage] = useImmer(1);
   const getOrdersQuery = useQuery({
-    queryKey: ["GET_ORDERS", isAdmin],
-    queryFn: isAdmin ? getAllOrders : getMyOrders,
+    queryKey: ["GET_ORDERS", isAdmin, page],
+    queryFn: isAdmin ? () => getAllOrders(page) : () => getMyOrders(page),
     enabled: load,
   });
 
@@ -37,12 +39,16 @@ export const useOrders = ({ isAdmin = false, load = false }) => {
     },
   });
 
-  const { data: orders, isLoading } = getOrdersQuery;
+  const { data, isLoading } = getOrdersQuery;
+  const { orders, pagination } = !!data && data;
 
   return {
     orders,
+    pagination,
     isLoading,
     cancelOrderMutation,
     updateOrderStatusMutation,
+    setPage,
+    page,
   };
 };

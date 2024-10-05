@@ -8,12 +8,14 @@ import GiftCouponCard from "../components/GiftCouponCard";
 import { useCartScope } from "../context";
 import { useCart, useUser } from "../hooks";
 import LoadingSpinner from "../components/LoadingSpinner";
+import BackdropLoadingSpinner from "../components/BackdropLoadingSpinner";
+import { useImmer } from "use-immer";
 
 const CartPage = () => {
     const { CartState: { cart }, isLoading } = useCartScope()
     const { updateQuantityCartMutation,
         removeAllFromCartMutation } = useCart({ load: false })
-
+    const [isPaymentProcessing, setIsPaymentProcessing] = useImmer(false)
     const { addresses, isLoading: addressLoading } = useUser({ load: true })
 
     if (isLoading || addressLoading) {
@@ -22,6 +24,7 @@ const CartPage = () => {
 
     return (
         <div className='py-8 md:py-16'>
+            <BackdropLoadingSpinner isLoading={isPaymentProcessing} text="We are processing your payment. Please&nbsp;wait..." />
             <div className='mx-auto max-w-screen-xl px-4 2xl:px-0'>
                 <div className='mt-6 sm:mt-8 md:gap-6 lg:flex lg:items-start xl:gap-8'>
                     <motion.div
@@ -49,7 +52,7 @@ const CartPage = () => {
                             animate={{ opacity: 1, x: 0 }}
                             transition={{ duration: 0.5, delay: 0.4 }}
                         >
-                            <OrderSummary data={addresses} />
+                            <OrderSummary data={addresses} setLoading={setIsPaymentProcessing} />
                             <GiftCouponCard />
                         </motion.div>
                     )}

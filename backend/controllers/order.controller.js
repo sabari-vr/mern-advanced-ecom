@@ -13,8 +13,14 @@ function capitalizeFirstLetter(string) {
 }
 
 export const getAllOrders = async (req, res) => {
+  const page = parseInt(req.query.page) || 1;
+  const limit = parseInt(req.query.limit) || 10;
   try {
+    const skip = (page - 1) * limit;
     const orders = await Order.find()
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit)
       .populate({
         path: "userId",
         select: "email name ",
@@ -29,12 +35,21 @@ export const getAllOrders = async (req, res) => {
         path: "paymentId",
         select: "razorpay_order_id razorpay_payment_id date",
         model: Payment,
-      })
-      .sort({
-        createdAt: -1,
       });
 
-    res.json(orders);
+    const totalOrders = await Order.countDocuments({});
+    const totalPages = Math.ceil(totalOrders / limit);
+
+    res.json({
+      orders,
+      pagination: {
+        totalOrders,
+        totalPages,
+        currentPage: page,
+        hasNextPage: page < totalPages,
+        hasPreviousPage: page > 1,
+      },
+    });
   } catch (error) {
     console.error("Error retrieving orders:", error);
     res.status(500).json({
@@ -45,11 +60,28 @@ export const getAllOrders = async (req, res) => {
 };
 
 export const getMyOrders = async (req, res) => {
+  const page = parseInt(req.query.page) || 1;
+  const limit = parseInt(req.query.limit) || 10;
   try {
-    const orders = await Order.find({ userId: req.user.id }).sort({
-      createdAt: -1,
+    const skip = (page - 1) * limit;
+    const orders = await Order.find({ userId: req.user.id })
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit);
+
+    const totalOrders = await Order.countDocuments({ userId: req.user.id });
+    const totalPages = Math.ceil(totalOrders / limit);
+
+    res.json({
+      orders,
+      pagination: {
+        totalOrders,
+        totalPages,
+        currentPage: page,
+        hasNextPage: page < totalPages,
+        hasPreviousPage: page > 1,
+      },
     });
-    res.json(orders);
   } catch (error) {
     console.error("Error retrieving orders:", error);
     res.status(500).json({

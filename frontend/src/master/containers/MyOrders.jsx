@@ -7,13 +7,11 @@ import { useNavigate } from 'react-router-dom';
 export const MyOrders = () => {
     const navigate = useNavigate()
     const [activeOrder, setActiveOrder] = useImmer(null);
-    const { orders, isLoading, cancelOrderMutation } = useOrders({ isAdmin: false, load: true })
+    const { orders, isLoading, cancelOrderMutation, setPage, pagination } = useOrders({ isAdmin: false, load: true })
+    const { totalPages, totalOrders, hasPreviousPage, hasNextPage, currentPage } = !!pagination && pagination
 
     const handleCancelOrder = (id) => {
         cancelOrderMutation.mutate(id)
-    };
-
-    const handleOrderAgain = () => {
     };
 
     const toggleOrder = (orderId) => {
@@ -24,6 +22,10 @@ export const MyOrders = () => {
         }
     };
 
+    const handlePageChange = (pageNumber) => {
+        setPage(pageNumber);
+    };
+
     if (isLoading) {
         return <LoadingSpinner />
     }
@@ -31,7 +33,7 @@ export const MyOrders = () => {
     return (
         <div className="min-h-screen  p-4">
             <div className="max-w-4xl mx-auto  p-6 rounded-lg shadow-lg">
-                <h2 className="text-2xl font-bold mb-4">My Orders</h2>
+                <h2 className="text-2xl font-bold mb-4">My Orders | Total :- {totalOrders}</h2>
                 {orders.length > 0 ? (
                     orders.map((order) => {
                         const isActive = activeOrder === order._id;
@@ -132,8 +134,30 @@ export const MyOrders = () => {
                             </div>
                         );
                     })
+
                 ) : (
                     <p className="text-white-500 text-center">No orders found.</p>
+                )}
+                {orders.length > 0 && (
+                    <div className="flex justify-between items-center mt-4">
+                        <button
+                            onClick={() => handlePageChange(currentPage - 1)}
+                            disabled={!hasPreviousPage}
+                            className={`p-2 text-sm font-medium rounded-md ${!hasPreviousPage ? 'bg-gray-600 text-gray-400' : 'bg-gray-700 text-white hover:bg-gray-600'}`}
+                        >
+                            Previous
+                        </button>
+                        <div className="text-white">
+                            Page {currentPage} of {totalPages}
+                        </div>
+                        <button
+                            onClick={() => handlePageChange(currentPage + 1)}
+                            disabled={!hasNextPage}
+                            className={`p-2 text-sm font-medium rounded-md ${!hasNextPage ? 'bg-gray-600 text-gray-400' : 'bg-gray-700 text-white hover:bg-gray-600'}`}
+                        >
+                            Next
+                        </button>
+                    </div>
                 )}
             </div>
         </div>

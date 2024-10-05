@@ -9,11 +9,13 @@ import LoadingSpinner from "../components/LoadingSpinner";
 import { useImmer } from "use-immer";
 import { useEffect } from "react";
 import ReOrderCartItem from "../components/ReOrderCartItem";
+import BackdropLoadingSpinner from "../components/BackdropLoadingSpinner";
 
 const ReordePage = () => {
     const { cartListQuery } = useCart({ load: true })
     const { data: cartData, isLoading, isFetching, isPending } = cartListQuery
     const [cart, setCart] = useImmer([])
+    const [isPaymentProcessing, setIsPaymentProcessing] = useImmer(false)
     const [CartState, setCartState] = useImmer({
         cart: [],
         coupon: null,
@@ -84,6 +86,7 @@ const ReordePage = () => {
 
     return (
         <div className='py-8 md:py-16'>
+            <BackdropLoadingSpinner isLoading={isPaymentProcessing} text="We are processing your payment. Please&nbsp;wait..." />
             <div className='mx-auto max-w-screen-xl px-4 2xl:px-0'>
                 <div className='mt-6 sm:mt-8 md:gap-6 lg:flex lg:items-start xl:gap-8'>
                     <motion.div
@@ -111,7 +114,7 @@ const ReordePage = () => {
                             animate={{ opacity: 1, x: 0 }}
                             transition={{ duration: 0.5, delay: 0.4 }}
                         >
-                            <OrderSummary data={addresses} cartData={CartState} />
+                            <OrderSummary data={addresses} cartData={CartState} setLoading={setIsPaymentProcessing} />
                             <GiftCouponCard />
                         </motion.div>
                     )}

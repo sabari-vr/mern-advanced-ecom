@@ -6,7 +6,8 @@ import LoadingSpinner from '../components/LoadingSpinner';
 export const ManageOrders = () => {
     const [activeOrder, setActiveOrder] = useImmer(null);
     const [selectedStatus, setSelectedStatus] = useImmer(null);
-    const { orders, isLoading, updateOrderStatusMutation } = useOrders({ isAdmin: true, load: true })
+    const { orders, isLoading, updateOrderStatusMutation, pagination, setPage } = useOrders({ isAdmin: true, load: true })
+    const { totalPages, totalOrders, hasPreviousPage, hasNextPage, currentPage } = !!pagination && pagination
 
     const handleUpdateOrder = (id) => {
         updateOrderStatusMutation.mutate({ id, status: selectedStatus })
@@ -26,6 +27,10 @@ export const ManageOrders = () => {
         setSelectedStatus(value)
     }
 
+    const handlePageChange = (pageNumber) => {
+        setPage(pageNumber);
+    };
+
     if (isLoading) {
         return <LoadingSpinner />
     }
@@ -33,7 +38,7 @@ export const ManageOrders = () => {
     return (
         <div className="min-h-screen  p-4">
             <div className="max-w-4xl mx-auto  p-6 rounded-lg shadow-lg">
-                <h2 className="text-2xl font-bold mb-4">My Orders</h2>
+                <h2 className="text-2xl font-bold mb-4">My Orders | Total :- {totalOrders}</h2>
                 {orders.length > 0 ? (
                     orders.map((order) => {
                         const isActive = activeOrder === order._id;
@@ -137,6 +142,27 @@ export const ManageOrders = () => {
                     })
                 ) : (
                     <p className="text-white-500 text-center">No orders found.</p>
+                )}
+                {orders.length > 0 && (
+                    <div className="flex justify-between items-center mt-4">
+                        <button
+                            onClick={() => handlePageChange(currentPage - 1)}
+                            disabled={!hasPreviousPage}
+                            className={`p-2 text-sm font-medium rounded-md ${!hasPreviousPage ? 'bg-gray-600 text-gray-400' : 'bg-gray-700 text-white hover:bg-gray-600'}`}
+                        >
+                            Previous
+                        </button>
+                        <div className="text-white">
+                            Page {currentPage} of {totalPages}
+                        </div>
+                        <button
+                            onClick={() => handlePageChange(currentPage + 1)}
+                            disabled={!hasNextPage}
+                            className={`p-2 text-sm font-medium rounded-md ${!hasNextPage ? 'bg-gray-600 text-gray-400' : 'bg-gray-700 text-white hover:bg-gray-600'}`}
+                        >
+                            Next
+                        </button>
+                    </div>
                 )}
             </div>
         </div>
