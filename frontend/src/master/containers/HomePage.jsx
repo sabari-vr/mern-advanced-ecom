@@ -1,6 +1,5 @@
 import CategoryItem from "../components/CategoryItem";
 import FeaturedProducts from "../components/FeaturedProducts";
-import { useQuery } from "@tanstack/react-query";
 import { useCategory } from "../hooks";
 
 const HomePage = () => {

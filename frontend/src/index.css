@@ -18,3 +18,19 @@ div[drawer-backdrop] {
 #sidebar-multi-level-sidebar {
   padding-top: 65px;
 }
+
+select {
+  background-color: transparent; /* Make the background of the select transparent */
+  color: white; /* White font color for the selected option */
+  border: 1px solid #d1fae5; /* Light emerald border */
+}
+
+select option {
+  background-color: #0f1c27; /* Transparent background for options */
+  color: white; /* White font color */
+}
+
+select option:hover {
+  background-color: #10b981; /* Emerald color on hover */
+  color: white;
+}

@@ -1,10 +1,13 @@
 import { Heart } from "lucide-react";
 import { Link } from "react-router-dom";
+import { useAppScope } from "../context";
 
 const ProductCard = ({ product, wishListMutation, wishListState }) => {
+    const { AppState: { user } } = useAppScope();
     const isWishlisted = wishListState?.some((e) => e.product._id == product._id)
 
     const handleWishlistClick = () => {
+        if (!user) return errorMessage("Please login to wishlist products", { id: "login" });
         wishListMutation.mutate(product._id)
     };
 
