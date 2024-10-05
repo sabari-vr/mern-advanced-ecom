@@ -23,6 +23,7 @@ const CategoryPage = () => {
         priceRange: [0, 10000],
     }
     const [filter, setFilter] = useImmer(initialFilter)
+    const [isFiltered, setIsFiltered] = useState(false);
     const [isModalOpen, setIsModalOpen] = useState(false);
 
     useEffect(() => {
@@ -30,6 +31,20 @@ const CategoryPage = () => {
             setProducts(prevProducts => [...prevProducts, ...data.products]);
         }
     }, [data, isFetching]);
+
+    useEffect(() => {
+        const isFilterChanged = () => {
+            return (
+                pagination.selectedGender !== initialFilter.selectedGender ||
+                pagination.selectedFor !== initialFilter.selectedFor ||
+                pagination.selectedSize !== initialFilter.selectedSize ||
+                pagination.priceRange[0] !== initialFilter.priceRange[0] ||
+                pagination.priceRange[1] !== initialFilter.priceRange[1]
+            );
+        };
+
+        setIsFiltered(isFilterChanged());
+    }, [pagination]);
 
     const loadMore = () => {
         if (!data.pagination || data.pagination.totalPages === pagination.page) return
@@ -199,17 +214,19 @@ const CategoryPage = () => {
 
 
                     <div className='block lg:hidden mb-8'>
-                        <button
-                            className="w-auto ml-auto mr-0 p-2 mb-4 rounded-md bg-emerald-700 text-white text-right flex items-center justify-center"
-                            style={{ maxWidth: '200px' }}
-                            onClick={() => setIsModalOpen(true)}
-                        >
-
-                            <span className="flex items-center">
-                                <FilterIcon className="w-5 h-5 mr-2" />
-                                Filter products
-                            </span>
-                        </button>
+                        <div className="w-auto ml-auto mr-0 mb-4 flex justify-end items-center">
+                            {isFiltered && (<span className="mr-4" onClick={clearFilter}>Clear Filters</span>)}
+                            <button
+                                className="p-2 rounded-md bg-emerald-700 text-white flex items-center"
+                                style={{ maxWidth: '200px' }}
+                                onClick={() => setIsModalOpen(true)}
+                            >
+                                <span className="flex items-center">
+                                    <FilterIcon className="w-5 h-5 mr-2" />
+                                    Filter products
+                                </span>
+                            </button>
+                        </div>
                     </div>
 
                     <motion.div
