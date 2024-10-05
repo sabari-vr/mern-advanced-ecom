@@ -1,6 +1,7 @@
 import { Heart } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useAppScope } from "../context";
+import { errorMessage } from "../../utils";
 
 const ProductCard = ({ product, wishListMutation, wishListState }) => {
     const { AppState: { user } } = useAppScope();
