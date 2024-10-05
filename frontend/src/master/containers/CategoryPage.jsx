@@ -6,6 +6,7 @@ import { useCategory } from "../hooks/useCategory";
 import { useCartScope } from "..";
 import { FilterIcon } from "lucide-react";
 import { useImmer } from "use-immer";
+import LoadingSpinner from "../components/LoadingSpinner";
 
 const CategoryPage = () => {
     const [searchParams] = useSearchParams();
@@ -13,7 +14,7 @@ const CategoryPage = () => {
     const category = searchParams.get('category');
     const { WishListState, toggleWishListMutation } = useCartScope();
     const { productListQuery, setPagination, pagination, sizeOptions, forOptions, genderOptions } = useCategory({ categoryId, load: false });
-    const { data, isFetching } = !!productListQuery && productListQuery;
+    const { data, isFetching, isLoading } = !!productListQuery && productListQuery;
     const [products, setProducts] = useImmer([])
     const initialFilter = {
         selectedGender: "",
@@ -87,6 +88,11 @@ const CategoryPage = () => {
         setFilter(initialFilter)
         setIsModalOpen(false)
         setProducts([])
+    }
+
+
+    if (isLoading && products.length === 0) {
+        return <LoadingSpinner />
     }
 
     return (
@@ -222,6 +228,16 @@ const CategoryPage = () => {
                             <ProductCard key={product._id + 'category'} product={product} wishListMutation={toggleWishListMutation} wishListState={WishListState} />
                         ))}
                     </motion.div>
+                    {isLoading && (
+
+                        <div className="flex justify-center mt-6">
+                            <motion.div
+                                className='w-10 h-10 border-4 border-t-4 border-t-green-500 border-green-200 rounded-full'
+                                animate={{ rotate: 360 }}
+                                transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                            />
+                        </div>
+                    )}
                 </div>
             </div>
 

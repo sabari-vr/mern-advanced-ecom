@@ -59,7 +59,7 @@ export const useCategory = ({ categoryId = null, load = false }) => {
   const [previewImagesEdit, setPreviewImagesEdit] = useImmer(false);
   const [pagination, setPagination] = useImmer({
     page: 1,
-    limit: 6,
+    limit: 2,
     selectedGender: "",
     selectedFor: "",
     selectedSize: "",
