@@ -12,18 +12,70 @@ import { useImmer } from "use-immer";
 import { errorMessage, successMessage } from "../../utils";
 
 export const useCategory = ({ categoryId = null, load = false }) => {
+  const genderOptions = [
+    { value: 0, label: "Male" },
+    { value: 1, label: "Female" },
+    { value: 2, label: "Gender Neutral" },
+  ];
+
+  const forOptions = [
+    { value: 0, label: "Adult" },
+    { value: 1, label: "Kids" },
+    { value: 2, label: "All" },
+  ];
+
+  const sizeOptions = [
+    { value: "XS", label: "Extra Small (XS)" },
+    { value: "S", label: "Small (S)" },
+    { value: "M", label: "Medium (M)" },
+    { value: "L", label: "Large (L)" },
+    { value: "XL", label: "Extra Large (XL)" },
+    { value: "XXL", label: "2X Large (XXL)" },
+    { value: "XXXL", label: "3X Large (XXXL)" },
+    { value: "XXXXL", label: "4X Large (XXXXL)" },
+    { value: "FREE", label: "Free Size" },
+    { value: "6", label: "6" },
+    { value: "7", label: "7" },
+    { value: "8", label: "8" },
+    { value: "9", label: "9" },
+    { value: "10", label: "10" },
+    { value: "11", label: "11" },
+    { value: "12", label: "12" },
+    { value: "30", label: "30" },
+    { value: "32", label: "32" },
+    { value: "34", label: "34" },
+    { value: "36", label: "36" },
+    { value: "38", label: "38" },
+    { value: "40", label: "40" },
+    { value: "42", label: "42" },
+    { value: "44", label: "44" },
+    { value: "46", label: "46" },
+    { value: "48", label: "48" },
+    { value: "50", label: "50" },
+  ];
+
   const [editingId, setEditingId] = useState(null);
   const [previewImages, setPreviewImages] = useImmer(false);
   const [previewImagesEdit, setPreviewImagesEdit] = useImmer(false);
+  const [pagination, setPagination] = useImmer({
+    page: 1,
+    limit: 6,
+    selectedGender: "",
+    selectedFor: "",
+    selectedSize: "",
+    priceRange: [0, 10000],
+  });
   const [editName, setEditName] = useState("");
   const [newCategoryName, setNewCategoryName] = useState("");
   const queryClient = useQueryClient();
 
   const productListQuery = useQuery({
-    queryKey: ["GET_PRODUCTS_BY_CATEGORY", categoryId],
-    queryFn: () => getProductsByCategory(categoryId),
+    queryKey: ["GET_PRODUCTS_BY_CATEGORY", categoryId, pagination],
+    queryFn: () => getProductsByCategory({ categoryId, pagination }),
     enabled: !!categoryId,
   });
+
+  console.log(!!categoryId);
 
   const feturedProductListQuery = useQuery({
     queryKey: ["GET_FEATURED_PRODUCTS"],
@@ -118,20 +170,16 @@ export const useCategory = ({ categoryId = null, load = false }) => {
   };
 
   const handleAdd = async () => {
-    // Check if previewImages is empty or not defined
     if (!previewImages || previewImages.length === 0) {
       return errorMessage("Image is mandatory");
     }
 
-    // Check if newCategoryName is valid
     if (newCategoryName.trim()) {
       try {
         const formData = new FormData();
 
-        // Append category name
         formData.append("data", JSON.stringify({ name: newCategoryName }));
 
-        // Convert images to base64 format
         const base64Images = await Promise.all(
           previewImages.map(async (image) => {
             const base64 = await fileToBase64(image.file);
@@ -174,5 +222,10 @@ export const useCategory = ({ categoryId = null, load = false }) => {
     feturedProductListQuery,
     previewImagesEdit,
     setPreviewImagesEdit,
+    setPagination,
+    pagination,
+    sizeOptions,
+    forOptions,
+    genderOptions,
   };
 };

@@ -1,8 +1,13 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { Toaster } from 'react-hot-toast'
-import FloatingShape from '../components/FloatingShape'
+import { useLocation } from 'react-router-dom';
 
 const AppLoyout = ({ children }) => {
+    const location = useLocation();
+
+    useEffect(() => {
+        window.scrollTo({ top: 0, left: 0, behavior: "instant" });
+    }, [location.pathname]);
     return (
         <div className='min-h-screen bg-gray-900 text-white relative overflow-hidden'>
             <div className='absolute inset-0 overflow-hidden'>

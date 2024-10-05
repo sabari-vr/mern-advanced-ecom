@@ -2,12 +2,22 @@ import { motion } from "framer-motion";
 import { Trash, Star, Pencil } from "lucide-react";
 import { useManageProduct } from "..";
 import { useNavigate } from "react-router-dom";
+import LoadingSpinner from "./LoadingSpinner";
 
 const ProductsList = () => {
     const navigate = useNavigate()
-    const { deleteProduct, toggleFeaturedProduct, productListQuery } = useManageProduct({ productId: null });
-    const { data, isFetching } = !!productListQuery && productListQuery
-    const { products } = !!data && !isFetching && data
+    const { deleteProduct, toggleFeaturedProduct, productListQuery, setPage } = useManageProduct({ productId: null });
+    const { data, isFetching, isLoading } = !!productListQuery && productListQuery
+    const { products, pagination } = !!data && !isFetching && data
+    const { totalPages, totalProducts, hasPreviousPage, hasNextPage, currentPage } = !!pagination && pagination
+
+    const handlePageChange = (pageNumber) => {
+        setPage(pageNumber);
+    };
+
+    if (isLoading) {
+        return <LoadingSpinner />
+    }
 
     return (
         <motion.div
@@ -103,6 +113,25 @@ const ProductsList = () => {
                     ))}
                 </tbody>
             </table>
+            <div className="flex justify-between items-center mt-4">
+                <button
+                    onClick={() => handlePageChange(currentPage - 1)}
+                    disabled={!hasPreviousPage}
+                    className={`p-2 text-sm font-medium rounded-md ${!hasPreviousPage ? 'bg-gray-600 text-gray-400' : 'bg-gray-700 text-white hover:bg-gray-600'}`}
+                >
+                    Previous
+                </button>
+                <div className="text-white">
+                    Page {currentPage} of {totalPages} | Total Products : {totalProducts}
+                </div>
+                <button
+                    onClick={() => handlePageChange(currentPage + 1)}
+                    disabled={!hasNextPage}
+                    className={`p-2 text-sm font-medium rounded-md ${!hasNextPage ? 'bg-gray-600 text-gray-400' : 'bg-gray-700 text-white hover:bg-gray-600'}`}
+                >
+                    Next
+                </button>
+            </div>
         </motion.div>
     );
 };

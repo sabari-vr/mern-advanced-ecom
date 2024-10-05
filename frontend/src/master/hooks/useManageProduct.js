@@ -61,13 +61,14 @@ export const useManageProduct = ({ productId = null, load = false }) => {
 
   const [newProduct, setNewProduct] = useImmer(initalProductValue);
   const [previewImages, setPreviewImages] = useImmer([]);
+  const [page, setPage] = useImmer(1);
   const [sizeStock, setSizeStock] = useImmer(
     sizes.reduce((acc, size) => ({ ...acc, [size]: 0 }), {})
   );
 
   const productListQuery = useQuery({
-    queryKey: ["GET_PRODUCT_LIST"],
-    queryFn: getAllProducts,
+    queryKey: ["GET_PRODUCT_LIST", page],
+    queryFn: () => getAllProducts(page),
     enabled: true,
   });
 
@@ -199,5 +200,7 @@ export const useManageProduct = ({ productId = null, load = false }) => {
     sizes,
     updateProductMutation,
     productByIdQuery,
+    setPage,
+    page,
   };
 };

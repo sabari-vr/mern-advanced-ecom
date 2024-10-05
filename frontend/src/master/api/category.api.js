@@ -1,8 +1,17 @@
 import { Axios } from "../../utils";
 
-export const getProductsByCategory = async (category) => {
-  const res = await Axios.get(`/products/category/${category}`);
-  return res.data;
+export const getProductsByCategory = async ({ categoryId, pagination }) => {
+  const { page, limit, selectedGender, selectedFor, selectedSize, priceRange } =
+    pagination;
+
+  try {
+    const res = await Axios.get(
+      `/products/category/${categoryId}?page=${page}&limit=${limit}&gender=${selectedGender}&forAudience=${selectedFor}&size=${selectedSize}&minPrice=${priceRange[0]}&maxPrice=${priceRange[1]}`
+    );
+    return res.data;
+  } catch (error) {
+    console.log(error);
+  }
 };
 
 export const createCategory = async (formData) => {

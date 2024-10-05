@@ -18,8 +18,8 @@ export const updateProduct = async ({ id, formData }) => {
   return res.data;
 };
 
-export const getAllProducts = async () => {
-  const res = await Axios.get("/products");
+export const getAllProducts = async (page) => {
+  const res = await Axios.get(`/products?page=${page}&limit=5`);
   return res.data;
 };
 

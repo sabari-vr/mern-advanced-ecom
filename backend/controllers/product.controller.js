@@ -1,19 +1,37 @@
 import cloudinary from "../config/cloudinary.js";
 import { Category } from "../models/category.model.js";
-import { Order } from "../models/order.modal.js";
 import { Product } from "../models/product.model.js";
-import DatauriParser from "datauri/parser.js";
-
-const parser = new DatauriParser();
 
 export const getAllProducts = async (req, res) => {
+  const page = parseInt(req.query.page) || 1;
+  const limit = parseInt(req.query.limit) || 10;
+
   try {
-    const products = await Product.find({}).populate({
-      path: "categoryId",
-      select: "name",
-      model: Category,
+    const skip = (page - 1) * limit;
+
+    const products = await Product.find({})
+      .sort({ createdAt: -1 })
+      .populate({
+        path: "categoryId",
+        select: "name",
+        model: Category,
+      })
+      .skip(skip)
+      .limit(limit);
+
+    const totalProducts = await Product.countDocuments({});
+    const totalPages = Math.ceil(totalProducts / limit);
+
+    res.json({
+      products,
+      pagination: {
+        totalProducts,
+        totalPages,
+        currentPage: page,
+        hasNextPage: page < totalPages,
+        hasPreviousPage: page > 1,
+      },
     });
-    res.json({ products });
   } catch (error) {
     console.log("Error in getAllProducts controller", error.message);
     res.status(500).json({ message: "Server error", error: error.message });
@@ -229,9 +247,58 @@ export const getRecommendedProducts = async (req, res) => {
 
 export const getProductsByCategory = async (req, res) => {
   const { category } = req.params;
+  const page = parseInt(req.query.page) || 1;
+  const limit = parseInt(req.query.limit) || 10;
+
+  const skip = (page - 1) * limit;
+
+  const { gender, forAudience, size, minPrice, maxPrice } = req.query;
+
+  const filter = { categoryId: category };
+
+  if (gender) {
+    filter.gender = parseInt(gender);
+  }
+
+  if (forAudience) {
+    filter.for = parseInt(forAudience);
+  }
+
+  if (size) {
+    filter[`size.${size}`] = { $exists: true };
+  }
+
+  if (minPrice || maxPrice) {
+    filter.price = {};
+    if (minPrice) {
+      filter.price.$gte = parseFloat(minPrice);
+    }
+    if (maxPrice) {
+      filter.price.$lte = parseFloat(maxPrice);
+    }
+  }
+
+  console.log(filter);
+
   try {
-    const products = await Product.find({ categoryId: category });
-    res.json({ products });
+    const products = await Product.find(filter)
+      .sort({ updatedAt: -1 })
+      .skip(skip)
+      .limit(limit);
+
+    const totalProducts = await Product.countDocuments(filter);
+    const totalPages = Math.ceil(totalProducts / limit);
+
+    res.json({
+      products,
+      pagination: {
+        totalProducts,
+        totalPages,
+        currentPage: page,
+        hasNextPage: page < totalPages,
+        hasPreviousPage: page > 1,
+      },
+    });
   } catch (error) {
     console.log("Error in getProductsByCategory controller", error.message);
     res.status(500).json({ message: "Server error", error: error.message });
