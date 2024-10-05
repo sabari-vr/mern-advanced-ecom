@@ -58,7 +58,6 @@ const CategoryPage = () => {
             window.innerHeight + document.documentElement.scrollTop
             >= document.documentElement.offsetHeight - 100
         ) {
-            console.log('Reached bottom of page');
             loadMore();
         }
     }, [loadMore]);
@@ -212,10 +211,9 @@ const CategoryPage = () => {
                         </div>
                     </div>
 
-
                     <div className='block lg:hidden mb-8'>
                         <div className="w-auto ml-auto mr-0 mb-4 flex justify-end items-center">
-                            {isFiltered && (<span className="mr-4" onClick={clearFilter}>Clear Filters</span>)}
+                            {isFiltered && (<span className="mr-4" onClick={clearFilter}>Clear</span>)}
                             <button
                                 className="p-2 rounded-md bg-emerald-700 text-white flex items-center"
                                 style={{ maxWidth: '200px' }}
@@ -223,37 +221,42 @@ const CategoryPage = () => {
                             >
                                 <span className="flex items-center">
                                     <FilterIcon className="w-5 h-5 mr-2" />
-                                    Filter products
+                                    Filter
                                 </span>
                             </button>
                         </div>
                     </div>
 
-                    <motion.div
-                        className='lg:w-3/4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 justify-items-center'
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.8, delay: 0.2 }}
-                    >
-                        {products?.length === 0 && (
-                            <h2 className='text-3xl font-semibold text-gray-300 text-center col-span-full'>
-                                No products found
-                            </h2>
-                        )}
-
-                        {products?.map((product) => (
-                            <ProductCard key={product._id + 'category'} product={product} wishListMutation={toggleWishListMutation} wishListState={WishListState} />
-                        ))}
-                    </motion.div>
-                    {isLoading && (
-
-                        <div className="flex justify-center mt-6">
+                    {(isLoading || isFetching) && products.length === 0 ? (
+                        <LoadingSpinner />
+                    ) : (
+                        <>
                             <motion.div
-                                className='w-10 h-10 border-4 border-t-4 border-t-green-500 border-green-200 rounded-full'
-                                animate={{ rotate: 360 }}
-                                transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-                            />
-                        </div>
+                                className='lg:w-3/4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 justify-items-center'
+                                initial={{ opacity: 0, y: 20 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ duration: 0.8, delay: 0.2 }}
+                            >
+                                {products?.length === 0 && (
+                                    <h2 className='text-3xl font-semibold text-gray-300 text-center col-span-full'>
+                                        No products found
+                                    </h2>
+                                )}
+
+                                {products?.map((product) => (
+                                    <ProductCard key={product._id + 'category'} product={product} wishListMutation={toggleWishListMutation} wishListState={WishListState} />
+                                ))}
+                            </motion.div>
+                            {isLoading && (
+                                <div className="flex justify-center mt-6">
+                                    <motion.div
+                                        className='w-10 h-10 border-4 border-t-4 border-t-green-500 border-green-200 rounded-full'
+                                        animate={{ rotate: 360 }}
+                                        transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                                    />
+                                </div>
+                            )}
+                        </>
                     )}
                 </div>
             </div>
@@ -349,9 +352,6 @@ const CategoryPage = () => {
                     </div>
                 </div>
             )}
-
-
-
         </div>
     );
 };
