@@ -47,7 +47,7 @@ const CategoryPage = () => {
     }, [pagination]);
 
     const loadMore = () => {
-        if (!data.pagination || data.pagination.totalPages === pagination.page) return
+        if (!data.pagination || data.pagination.totalPages <= pagination.page) return
         setPagination(draft => {
             draft.page += 1;
         });
@@ -226,38 +226,40 @@ const CategoryPage = () => {
                             </button>
                         </div>
                     </div>
+                    <div>
+                        {(isLoading || isFetching) && products.length === 0 ? (
+                            <LoadingSpinner />
+                        ) : (
+                            <>
+                                <motion.div
+                                    className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 justify-items-center w-full'
+                                    initial={{ opacity: 0, y: 20 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    transition={{ duration: 0.8, delay: 0.2 }}
+                                >
+                                    {products?.length === 0 && (
+                                        <h2 className='text-3xl font-semibold text-gray-300 text-center col-span-full'>
+                                            No products found
+                                        </h2>
+                                    )}
 
-                    {(isLoading || isFetching) && products.length === 0 ? (
-                        <LoadingSpinner />
-                    ) : (
-                        <>
-                            <motion.div
-                                className='lg:w-3/4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 justify-items-center'
-                                initial={{ opacity: 0, y: 20 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                transition={{ duration: 0.8, delay: 0.2 }}
-                            >
-                                {products?.length === 0 && (
-                                    <h2 className='text-3xl font-semibold text-gray-300 text-center col-span-full'>
-                                        No products found
-                                    </h2>
+                                    {products?.map((product) => (
+                                        <ProductCard key={product._id + 'category'} product={product} wishListMutation={toggleWishListMutation} wishListState={WishListState} />
+                                    ))}
+
+                                </motion.div>
+                                {isLoading && (
+                                    <div className="flex justify-center mt-6">
+                                        <motion.div
+                                            className='w-10 h-10 border-4 border-t-4 border-t-green-500 border-green-200 rounded-full'
+                                            animate={{ rotate: 360 }}
+                                            transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                                        />
+                                    </div>
                                 )}
-
-                                {products?.map((product) => (
-                                    <ProductCard key={product._id + 'category'} product={product} wishListMutation={toggleWishListMutation} wishListState={WishListState} />
-                                ))}
-                            </motion.div>
-                            {isLoading && (
-                                <div className="flex justify-center mt-6">
-                                    <motion.div
-                                        className='w-10 h-10 border-4 border-t-4 border-t-green-500 border-green-200 rounded-full'
-                                        animate={{ rotate: 360 }}
-                                        transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-                                    />
-                                </div>
-                            )}
-                        </>
-                    )}
+                            </>
+                        )}
+                    </div>
                 </div>
             </div>
 
