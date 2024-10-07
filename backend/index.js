@@ -4,6 +4,7 @@ import cors from "cors";
 import path from "path";
 
 import { connectDB } from "./config/connectDB.js";
+import job from "./cron.js";
 
 import authRoutes from "./routes/auth.route.js";
 import productRoutes from "./routes/product.route.js";
@@ -17,6 +18,7 @@ import analticsRoutes from "./routes/analtics.route.js";
 import reviewRoutes from "./routes/review.route.js";
 
 dotenv.config();
+job.start();
 
 const app = express();
 const PORT = process.env.PORT || 5000;
