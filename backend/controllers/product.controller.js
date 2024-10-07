@@ -2,6 +2,7 @@ import cloudinary from "../config/cloudinary.js";
 import { Category } from "../models/category.model.js";
 import { Product } from "../models/product.model.js";
 import { redis } from "../config/redis.js";
+import crypto from "crypto";
 
 export const getAllProducts = async (req, res) => {
   const page = parseInt(req.query.page) || 1;
@@ -87,39 +88,45 @@ export const getFeaturedProducts = async (req, res) => {
   }
 };
 
+export const genarateSignedURl = (req, res) => {
+  const timestamp = Math.floor(Date.now() / 1000);
+  const signature = crypto
+    .createHash("sha256")
+    .update(`timestamp=${timestamp}${process.env.CLOUDINARY_API_SECRET}`)
+    .digest("hex");
+
+  const signedUrl = `https://api.cloudinary.com/v1_1/${process.env.CLOUDINARY_CLOUD_NAME}/upload?api_key=${process.env.CLOUDINARY_API_KEY}&timestamp=${timestamp}&signature=${signature}`;
+
+  res.status(200).json({ signedUrl });
+};
+
 export const createProduct = async (req, res) => {
   try {
-    const productData = JSON.parse(req.body.data);
-    const images = JSON.parse(req.body.images);
-    const { name, description, price, categoryId, size, color, batchId } =
-      productData;
-
-    const imageUrls = [];
-
-    if (images && images.length > 0) {
-      for (let i = 0; i < images.length; i++) {
-        const file = images[i];
-
-        const cloudinaryResponse = await cloudinary.uploader.upload(
-          file.base64,
-          {
-            folder: "products",
-          }
-        );
-
-        imageUrls.push(cloudinaryResponse.secure_url);
-      }
-    }
+    const productData = req.body;
+    const {
+      name,
+      description,
+      price,
+      categoryId,
+      size,
+      color,
+      batchId,
+      images,
+      gender,
+      for: audiance,
+    } = productData;
 
     const product = await Product.create({
       name,
       description,
       price,
-      images: imageUrls,
       categoryId,
       size,
       color,
       batchId,
+      images,
+      gender,
+      for: audiance,
     });
 
     res.status(201).json(product);
@@ -132,8 +139,7 @@ export const createProduct = async (req, res) => {
 export const updateProduct = async (req, res) => {
   try {
     const { id } = req.params;
-    const productData = JSON.parse(req.body.data);
-    const images = JSON.parse(req.body.images);
+    const productData = req.body;
     const {
       name,
       description,
@@ -142,28 +148,10 @@ export const updateProduct = async (req, res) => {
       size,
       color,
       batchId,
+      images,
       gender,
       for: audiance,
     } = productData;
-
-    const imageUrls = [];
-
-    if (images && images.length > 0) {
-      for (let i = 0; i < images.length; i++) {
-        const file = images[i];
-        if (file.url) {
-          imageUrls.push(file.url);
-        } else if (file.base64) {
-          const cloudinaryResponse = await cloudinary.uploader.upload(
-            file.base64,
-            {
-              folder: "products",
-            }
-          );
-          imageUrls.push(cloudinaryResponse.secure_url);
-        }
-      }
-    }
 
     const updatedProduct = await Product.findByIdAndUpdate(
       id,
@@ -171,7 +159,7 @@ export const updateProduct = async (req, res) => {
         name,
         description,
         price,
-        images: imageUrls.length > 0 ? imageUrls : undefined,
+        images,
         categoryId,
         size,
         color,

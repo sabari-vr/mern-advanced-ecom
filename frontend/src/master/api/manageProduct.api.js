@@ -1,25 +1,22 @@
 import { Axios } from "../../utils";
 
 export const createProduct = async (payload) => {
-  const res = await Axios.post("/products", payload, {
-    headers: {
-      "Content-Type": "multipart/form-data",
-    },
-  });
+  const res = await Axios.post("/products", payload);
   return res.data;
 };
 
-export const updateProduct = async ({ id, formData }) => {
-  const res = await Axios.put(`/products/${id}`, formData, {
-    headers: {
-      "Content-Type": "multipart/form-data",
-    },
-  });
+export const updateProduct = async ({ id, finalProductData }) => {
+  const res = await Axios.put(`/products/${id}`, finalProductData);
   return res.data;
 };
 
 export const getAllProducts = async (page) => {
   const res = await Axios.get(`/products?page=${page}&limit=5`);
+  return res.data;
+};
+
+export const getSignedURL = async () => {
+  const res = await Axios.get(`/products/generate-signed-url`);
   return res.data;
 };
 

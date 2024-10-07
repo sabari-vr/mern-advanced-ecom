@@ -3,6 +3,7 @@ import { PlusCircle, Upload, Loader, X } from "lucide-react";
 import { useManageProduct } from '../hooks/useManageProduct';
 import { useEffect } from "react";
 import { useParams } from "react-router-dom";
+import { getSignedURL } from "../api";
 
 
 const EditProductForm = () => {
@@ -10,47 +11,43 @@ const EditProductForm = () => {
     const { updateProductMutation, newProduct, setNewProduct, previewImages, setPreviewImages, sizeStock, setSizeStock, categories, sizes } = useManageProduct({ productId: id, load: true });
     const { isPending: loading } = updateProductMutation;
 
-    const fileToBase64 = (file) => {
-        return new Promise((resolve, reject) => {
-            const reader = new FileReader();
-            reader.readAsDataURL(file);
-            reader.onload = () => resolve(reader.result);
-            reader.onerror = (error) => reject(error);
-        });
-    };
-
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const formData = new FormData();
             const { images, ...rest } = newProduct
             rest.size = Object.fromEntries(
                 Object.entries(newProduct.size).filter(([key, value]) => value !== 0)
             );
             if (Object.keys(rest.size).length === 0) return errorMessage('Please fill stock in atleast one size')
-            formData.append('data', JSON.stringify(rest));
-            const base64Images = await Promise.all(
-                previewImages.map(async (image) => {
-                    if (image.file) {
-                        const base64 = await fileToBase64(image.file);
-                        return {
-                            name: image.file.name,
-                            type: image.file.type,
-                            base64: base64
-                        };
-                    } else if (image.url) {
-                        return {
-                            name: image.url.split('/').pop(),
-                            type: '',
-                            url: image.url
-                        };
+
+            const signedURLs = await Promise.all(previewImages.map(async (image) => {
+                if (image.file) {
+                    const { signedUrl } = await getSignedURL();
+
+                    const form = new FormData()
+                    form.append('file', image.file)
+
+                    const uploadResponse = await fetch(signedUrl, {
+                        method: 'POST',
+                        body: form
+                    });
+
+                    if (!uploadResponse.ok) {
+                        throw new Error(`Upload failed for ${image.file.name}: ${uploadResponse.statusText}`);
                     }
 
-                })
-            );
+                    const cloudinaryResponse = await uploadResponse.json();
+                    return cloudinaryResponse.secure_url;
+                } else {
+                    return image.url
+                }
+            }));
 
-            formData.append('images', JSON.stringify(base64Images));
-            updateProductMutation.mutate({ id, formData });
+            const finalProductData = {
+                ...rest,
+                images: signedURLs
+            };
+            updateProductMutation.mutate({ id, finalProductData });
         } catch {
             console.log("error updaing a product");
         }

@@ -3,45 +3,47 @@ import { PlusCircle, Upload, Loader, X } from "lucide-react";
 import { useManageProduct } from '../hooks/useManageProduct';
 import { useEffect } from "react";
 import { errorMessage } from "../../utils";
+import { getSignedURL } from "../api";
 
 
 const CreateProductForm = () => {
     const { createProductMutation, newProduct, setNewProduct, previewImages, setPreviewImages, sizeStock, setSizeStock, categories, sizes } = useManageProduct({ productId: null, load: true });
     const { isPending: loading } = createProductMutation;
 
-    const fileToBase64 = (file) => {
-        return new Promise((resolve, reject) => {
-            const reader = new FileReader();
-            reader.readAsDataURL(file);
-            reader.onload = () => resolve(reader.result);
-            reader.onerror = (error) => reject(error);
-        });
-    };
-
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const formData = new FormData();
             const { images, ...rest } = newProduct
             rest.size = Object.fromEntries(
                 Object.entries(newProduct.size).filter(([key, value]) => value !== 0)
             );
             if (Object.keys(rest.size).length === 0) return errorMessage('Please fill stock in atleast one size')
 
-            formData.append('data', JSON.stringify(rest));
-            const base64Images = await Promise.all(
-                previewImages.map(async (image) => {
-                    const base64 = await fileToBase64(image.file);
-                    return {
-                        name: image.file.name,
-                        type: image.file.type,
-                        base64: base64
-                    };
-                })
-            );
+            const signedURLs = await Promise.all(previewImages.map(async (image) => {
+                const { signedUrl } = await getSignedURL();
 
-            formData.append('images', JSON.stringify(base64Images));
-            createProductMutation.mutate(formData);
+                const form = new FormData()
+                form.append('file', image.file)
+
+                const uploadResponse = await fetch(signedUrl, {
+                    method: 'POST',
+                    body: form
+                });
+
+                if (!uploadResponse.ok) {
+                    throw new Error(`Upload failed for ${image.file.name}: ${uploadResponse.statusText}`);
+                }
+
+                const cloudinaryResponse = await uploadResponse.json();
+                return cloudinaryResponse.secure_url;
+            }));
+
+            const finalProductData = {
+                ...rest,
+                images: signedURLs
+            };
+
+            createProductMutation.mutate(finalProductData);
         } catch {
             console.log("error creating a product");
         }

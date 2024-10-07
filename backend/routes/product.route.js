@@ -2,6 +2,7 @@ import express from "express";
 import {
   createProduct,
   deleteProduct,
+  genarateSignedURl,
   getAllProducts,
   getFeaturedProducts,
   getProductById,
@@ -18,18 +19,13 @@ const upload = multer({ storage: multer.memoryStorage() });
 
 router.get("/", protectRoute, adminRoute, getAllProducts);
 router.get("/recommendations", getRecommendedProducts);
+router.get("/generate-signed-url", protectRoute, genarateSignedURl);
 
 router.get("/featured", getFeaturedProducts);
 router.get("/:id", getProductById);
 
 router.get("/category/:category", getProductsByCategory);
-router.post(
-  "/",
-  protectRoute,
-  adminRoute,
-  upload.array("images"),
-  createProduct
-);
+router.post("/", protectRoute, adminRoute, createProduct);
 router.put(
   "/:id",
   protectRoute,
