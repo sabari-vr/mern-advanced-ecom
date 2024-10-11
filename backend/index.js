@@ -5,6 +5,7 @@ import path from "path";
 
 import { connectDB } from "./config/connectDB.js";
 import job from "./cron.js";
+import swaggerSetup from "./swagger.js";
 
 import authRoutes from "./routes/auth.route.js";
 import productRoutes from "./routes/product.route.js";
@@ -24,9 +25,16 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 const __dirname = path.resolve();
 
+// const corsOptions = {
+//   origin: "http://yourfrontenddomain.com",
+//   methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
+//   allowedHeaders: ["Content-Type", "Authorization"],
+// };
+
 app.use(cors({ origin: "*", credentials: true }));
 
-app.use(express.json({ limit: "15mb" })); // allows us to parse incoming requests:req.body
+app.use(express.json({ limit: "15mb" }));
+swaggerSetup(app);
 
 app.use("/api/auth", authRoutes);
 app.use("/api/products", productRoutes);
