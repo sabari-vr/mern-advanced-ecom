@@ -7,12 +7,12 @@
 
 /**
  * @swagger
- * /api/address:
+ * /api/user/address:
  *   get:
  *     summary: Get all addresses for the logged-in user
  *     tags: [User]
  *     security:
- *       - bearerAuth: []
+ *       - BearerAuth: []
  *     responses:
  *       200:
  *         description: Successfully retrieved addresses
@@ -22,12 +22,12 @@
 
 /**
  * @swagger
- * /api/address:
+ * /api/user/address:
  *   post:
  *     summary: Create a new address for the logged-in user
  *     tags: [User]
  *     security:
- *       - bearerAuth: []
+ *       - BearerAuth: []
  *     requestBody:
  *       required: true
  *       content:
@@ -37,16 +37,22 @@
  *             properties:
  *               address:
  *                 type: string
+ *                 example: "123 Street"
  *               city:
  *                 type: string
+ *                 example: "New York"
  *               country:
  *                 type: string
+ *                 example: "USA"
  *               pincode:
  *                 type: string
+ *                 example: "10001"
  *               name:
  *                 type: string
+ *                 example: "John Doe"
  *               contact:
  *                 type: string
+ *                 example: "1234567890"
  *     responses:
  *       201:
  *         description: Successfully created address
@@ -56,12 +62,12 @@
 
 /**
  * @swagger
- * /api/address/{id}:
+ * /api/user/address/{id}:
  *   put:
  *     summary: Update an existing address for the logged-in user
  *     tags: [User]
  *     security:
- *       - bearerAuth: []
+ *       - BearerAuth: []
  *     parameters:
  *       - name: id
  *         in: path
@@ -99,12 +105,12 @@
 
 /**
  * @swagger
- * /api/address/{id}:
+ * /api/user/address/{id}:
  *   delete:
  *     summary: Delete an address for the logged-in user
  *     tags: [User]
  *     security:
- *       - bearerAuth: []
+ *       - BearerAuth: []
  *     parameters:
  *       - name: id
  *         in: path
@@ -123,12 +129,12 @@
 
 /**
  * @swagger
- * /api/wishlist:
+ * /api/user/wishlist:
  *   get:
  *     summary: Get the user's wishlist
  *     tags: [User]
  *     security:
- *       - bearerAuth: []
+ *       - BearerAuth: []
  *     responses:
  *       200:
  *         description: Successfully retrieved wishlist
@@ -138,12 +144,12 @@
 
 /**
  * @swagger
- * /api/wishlist/toggle:
+ * /api/user/wishlist/toggle:
  *   post:
  *     summary: Toggle a product's presence in the user's wishlist
  *     tags: [User]
  *     security:
- *       - bearerAuth: []
+ *       - BearerAuth: []
  *     requestBody:
  *       required: true
  *       content:

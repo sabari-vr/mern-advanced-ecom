@@ -3,11 +3,11 @@ import { Category } from "../models/category.model.js";
 import { Product } from "../models/product.model.js";
 
 export const createCategory = async (req, res) => {
-  const data = JSON.parse(req.body.data);
-  const images = JSON.parse(req.body.images);
-  const { name } = data;
-
   try {
+    const data = JSON.parse(req.body.data);
+    const images = JSON.parse(req.body.images);
+    const { name } = data;
+
     const newCategory = new Category({ name });
 
     const file = images[0];

@@ -13,28 +13,22 @@
  *     description: Create a new category with an image.
  *     tags: [Category]
  *     security:
- *       - bearerAuth: []
+ *       - BearerAuth: []
  *     requestBody:
  *       required: true
  *       content:
- *         application/json:
+ *         multipart/form-data:  # Use multipart/form-data for file uploads
  *           schema:
  *             type: object
  *             properties:
- *               data:
- *                 type: object
- *                 properties:
- *                   name:
- *                     type: string
- *                     description: The name of the category
- *               images:
- *                 type: array
- *                 items:
- *                   type: object
- *                   properties:
- *                     base64:
- *                       type: string
- *                       description: Base64 string of the image
+ *               data:  # This should be a JSON string containing the category data
+ *                 type: string
+ *                 description: JSON string containing category information, including name
+ *               images:  # This should be a JSON string representing an array of images
+ *                 type: string
+ *                 description: |
+ *                   JSON string representing an array of image objects, e.g.,
+ *                   [{"base64": "string"}]
  *     responses:
  *       201:
  *         description: Category created successfully
@@ -56,6 +50,15 @@
  *                       type: string
  *       500:
  *         description: Server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                 error:
+ *                   type: string
  */
 
 /**
@@ -127,7 +130,7 @@
  *     description: Update an existing category by its ID.
  *     tags: [Category]
  *     security:
- *       - bearerAuth: []
+ *       - BearerAuth: []
  *     parameters:
  *       - in: path
  *         name: id
@@ -189,7 +192,7 @@
  *     description: Remove a category by its ID.
  *     tags: [Category]
  *     security:
- *       - bearerAuth: []
+ *       - BearerAuth: []
  *     parameters:
  *       - in: path
  *         name: id

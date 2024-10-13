@@ -13,7 +13,20 @@
  *     description: Retrieve all orders in the system. Accessible only to admin users.
  *     tags: [Orders]
  *     security:
- *       - bearerAuth: []
+ *       - BearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: page
+ *         schema:
+ *           type: integer
+ *           default: 1
+ *         description: The page number to retrieve.
+ *       - in: query
+ *         name: limit
+ *         schema:
+ *           type: integer
+ *           default: 10
+ *         description: The number of orders per page.
  *     responses:
  *       200:
  *         description: List of orders
@@ -65,7 +78,20 @@
  *     description: Retrieve all orders placed by the authenticated user.
  *     tags: [Orders]
  *     security:
- *       - bearerAuth: []
+ *       - BearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: page
+ *         schema:
+ *           type: integer
+ *           default: 1
+ *         description: The page number to retrieve.
+ *       - in: query
+ *         name: limit
+ *         schema:
+ *           type: integer
+ *           default: 10
+ *         description: The number of orders per page.
  *     responses:
  *       200:
  *         description: List of user's orders
@@ -114,7 +140,7 @@
  *     description: Cancel a specific order by its ID.
  *     tags: [Orders]
  *     security:
- *       - bearerAuth: []
+ *       - BearerAuth: []
  *     parameters:
  *       - in: path
  *         name: id
@@ -155,7 +181,7 @@
  *     description: Update the status of a specific order by its ID.
  *     tags: [Orders]
  *     security:
- *       - bearerAuth: []
+ *       - BearerAuth: []
  *     parameters:
  *       - in: path
  *         name: id

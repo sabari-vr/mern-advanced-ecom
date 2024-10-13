@@ -13,7 +13,7 @@
  *     description: Creates a new order and initiates payment processing with Razorpay.
  *     tags: [Payments]
  *     security:
- *       - bearerAuth: []
+ *       - BearerAuth: []
  *     requestBody:
  *       required: true
  *       content:
@@ -83,7 +83,7 @@
  *     description: Verify the payment made for an order and finalize the order creation.
  *     tags: [Payments]
  *     security:
- *       - bearerAuth: []
+ *       - BearerAuth: []
  *     requestBody:
  *       required: true
  *       content:

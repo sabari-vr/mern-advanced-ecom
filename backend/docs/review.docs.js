@@ -7,7 +7,7 @@
 
 /**
  * @swagger
- * /api/reviews/get-order/{id}:
+ * /api/review/get-order/{id}:
  *   get:
  *     summary: Get order by ID for review
  *     tags: [Reviews]
@@ -29,7 +29,7 @@
 
 /**
  * @swagger
- * /api/reviews/{productId}:
+ * /api/review/{productId}:
  *   get:
  *     summary: Get reviews by product ID
  *     tags: [Reviews]
@@ -51,7 +51,7 @@
 
 /**
  * @swagger
- * /api/reviews:
+ * /api/review:
  *   post:
  *     summary: Create a new review
  *     tags: [Reviews]

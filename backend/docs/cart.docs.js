@@ -13,7 +13,7 @@
  *     description: Retrieve all products currently in the authenticated user's cart.
  *     tags: [Cart]
  *     security:
- *       - bearerAuth: []
+ *       - BearerAuth: []
  *     responses:
  *       200:
  *         description: List of products in the cart
@@ -43,7 +43,7 @@
  *     description: Add a new product to the authenticated user's cart or increase the quantity if it already exists.
  *     tags: [Cart]
  *     security:
- *       - bearerAuth: []
+ *       - BearerAuth: []
  *     requestBody:
  *       required: true
  *       content:
@@ -85,7 +85,7 @@
  *     description: Remove all products from the authenticated user's cart or a specific product based on product ID and size.
  *     tags: [Cart]
  *     security:
- *       - bearerAuth: []
+ *       - BearerAuth: []
  *     requestBody:
  *       content:
  *         application/json:
@@ -126,7 +126,7 @@
  *     description: Update the quantity of a product in the authenticated user's cart.
  *     tags: [Cart]
  *     security:
- *       - bearerAuth: []
+ *       - BearerAuth: []
  *     parameters:
  *       - in: path
  *         name: id

@@ -7,13 +7,13 @@
 
 /**
  * @swagger
- * /api/auth/get-analytics-data:
+ * /api/analtics/get-analytics-data:
  *   get:
  *     summary: Retrieve analytics data and daily sales data
  *     description: This endpoint provides overall analytics data and sales data for the past 7 days. It is protected and requires admin access.
  *     tags: [Analytics]
  *     security:
- *       - bearerAuth: []
+ *       - BearerAuth: []
  *     responses:
  *       200:
  *         description: Successfully retrieved analytics and sales data

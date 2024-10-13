@@ -19,6 +19,9 @@
  *           schema:
  *             type: object
  *             properties:
+ *               name:
+ *                 type: string
+ *                 description: User's name
  *               email:
  *                 type: string
  *                 description: User's email
@@ -71,7 +74,7 @@
  *     description: This endpoint logs out the authenticated user and invalidates the token.
  *     tags: [Authentication]
  *     security:
- *       - bearerAuth: []
+ *       - BearerAuth: []
  *     responses:
  *       200:
  *         description: Successfully logged out
@@ -89,7 +92,7 @@
  *     description: This endpoint logs out the user from all devices.
  *     tags: [Authentication]
  *     security:
- *       - bearerAuth: []
+ *       - BearerAuth: []
  *     responses:
  *       200:
  *         description: Successfully logged out from all devices
@@ -113,7 +116,7 @@
  *           schema:
  *             type: object
  *             properties:
- *               token:
+ *               code:
  *                 type: string
  *                 description: Email verification token
  *     responses:
@@ -198,6 +201,9 @@
  *           schema:
  *             type: object
  *             properties:
+ *               accessToken:
+ *                 type: string
+ *                 description: The refresh token
  *               refreshToken:
  *                 type: string
  *                 description: The refresh token
