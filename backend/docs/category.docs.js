@@ -17,18 +17,20 @@
  *     requestBody:
  *       required: true
  *       content:
- *         multipart/form-data:  # Use multipart/form-data for file uploads
+ *         multipart/form-data:
  *           schema:
  *             type: object
  *             properties:
- *               data:  # This should be a JSON string containing the category data
- *                 type: string
- *                 description: JSON string containing category information, including name
- *               images:  # This should be a JSON string representing an array of images
+ *               data:
  *                 type: string
  *                 description: |
- *                   JSON string representing an array of image objects, e.g.,
- *                   [{"base64": "string"}]
+ *                   JSON string containing category information, e.g.,
+ *                   {"name": "New Category"}
+ *               images:
+ *                 type: string
+ *                 description: |
+ *                   JSON string representing an array of image objects. Example:
+ *                   [{"name": "file.png", "type": "image/png", "base64": "data:image/png;base64,..."}]
  *     responses:
  *       201:
  *         description: Category created successfully

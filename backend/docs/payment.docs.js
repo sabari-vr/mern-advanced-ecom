@@ -7,7 +7,7 @@
 
 /**
  * @swagger
- * /api/payments/order:
+ * /api/payment/order:
  *   post:
  *     summary: Create an Order
  *     description: Creates a new order and initiates payment processing with Razorpay.
@@ -77,7 +77,7 @@
 
 /**
  * @swagger
- * /api/payments/verify:
+ * /api/payment/verify:
  *   post:
  *     summary: Verify Payment
  *     description: Verify the payment made for an order and finalize the order creation.
