@@ -117,7 +117,7 @@ export const ManageOrders = () => {
                                             <select
                                                 value={selectedStatus ? selectedStatus : order.orderStatus}
                                                 onChange={(e) => handleStatusChange(e.target.value)}
-                                                className="border rounded-md p-1 " style={{ color: 'black' }}
+                                                className="border rounded-md p-1 " style={{ color: 'white' }}
                                             >
                                                 <option value="processing">Processing</option>
                                                 <option value="shipped">Shipped</option>
