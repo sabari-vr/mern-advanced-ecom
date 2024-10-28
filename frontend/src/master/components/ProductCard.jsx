@@ -5,7 +5,7 @@ import { errorMessage } from "../../utils";
 
 const ProductCard = ({ product, wishListMutation, wishListState }) => {
     const { AppState: { user } } = useAppScope();
-    const isWishlisted = wishListState?.some((e) => e.product._id == product._id)
+    const isWishlisted = wishListState?.some((e) => e?.product?._id == product?._id)
 
     const handleWishlistClick = () => {
         if (!user) return errorMessage("Please login to wishlist products", { id: "login" });
