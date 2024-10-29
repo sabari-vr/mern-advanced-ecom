@@ -70,7 +70,7 @@ const ProductDetailView = () => {
     const products = [{ productId: id, size: selectedSize, quantity: 1 }]
     const encodedProducts = encodeURIComponent(JSON.stringify(products));
 
-    const isWishlisted = WishListState?.some((e) => e.product._id == product._id)
+    const isWishlisted = WishListState?.some((e) => e.product?._id == product?._id)
 
     const handleWishlistClick = () => {
         if (!user) return errorMessage("Please login to add products to whislist", { id: "login" });
