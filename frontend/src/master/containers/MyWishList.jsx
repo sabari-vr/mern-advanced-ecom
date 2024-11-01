@@ -26,7 +26,7 @@ export const MyWishList = () => {
                     )}
 
                     {WishListState?.map((product) => (
-                        <ProductCard key={product._id + 'wishlist'} product={product.product} wishListMutation={toggleWishListMutation} wishListState={WishListState} />
+                        <ProductCard key={product?._id + 'wishlist'} product={product.product} wishListMutation={toggleWishListMutation} wishListState={WishListState} />
                     ))}
 
                 </motion.div>
